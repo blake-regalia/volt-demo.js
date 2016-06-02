@@ -1,0 +1,24 @@
+prefix dbo: <http://dbpedia.org/ontology/>
+prefix dbp: <http://dbpedia.org/property/>
+prefix dbr: <http://dbpedia.org/resource/>
+prefix stko: <http://stko.geog.ucsb.edu/vocab/>
+prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+
+#---
+
+select * {
+	?city a dbo:City ;
+		geo:geometry ?geo .
+}
+
+#---
+
+ask {
+	dbr:Sonora_Pass stko:southwest dbr:San_Diego .
+}
+
+#---
+
+select * {
+	dbr:Sonora_Pass stko:southeast ?place .
+}

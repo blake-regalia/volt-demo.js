@@ -1,0 +1,51 @@
+
+mixin source(s_file, h_extra)
+	-
+		var m_file_ext = /\.(.+)$/.exec(s_file);
+		var s_mode = 'text';
+		if(m_file_ext) {
+			var s_file_ext = m_file_ext[1];
+			if(site.data.code_map[s_file_ext]) {
+				s_mode = site.data.code_map[s_file_ext];
+			}
+		}
+
+		var s_extra = '';
+		if(h_extra) {
+			s_extra = (new Buffer(JSON.stringify(h_extra))).toString('base64');
+		}
+
+	div#controls
+	div#editor(data-file=s_file, data-mode=s_mode, data-extra=s_extra)
+	div#console
+		div#status
+		pre#output
+		div#results
+
+
+
+mixin editor(s_syntax, h_extra)
+	-
+		var s_extra = (new Buffer(JSON.stringify(h_extra || {}))).toString('base64');
+
+	button#clear Clear Cache
+	table.duo-grid
+		tbody
+			tr
+				td
+					div#editor(data-ace-mode=s_syntax, data-extra=s_extra)
+				td
+					div#console
+						div#status
+						pre#output
+						div#results
+			tr
+				td(colspan=2)
+					div#map
+
+	//- div#controls
+	//- div#editor(data-mode=s_syntax, data-extra=s_extra)
+	//- div#console
+	//- 	div#status
+	//- 	pre#output
+	//- 	div#results

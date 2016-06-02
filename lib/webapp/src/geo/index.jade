@@ -1,0 +1,6 @@
+extends ../_layouts/query
+
+include ../_modules/editor/editor
+
+block append content
+	+editor('sparql', {file: 'default.rq', response: 'geo'})

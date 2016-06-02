@@ -1,0 +1,21 @@
+extend ./base
+
+//- Add extra stylesheets
+block append stylesheets
+	link(rel='stylesheet', href='/source/leaflet.css')
+
+//- Configuration
+block config
+//-	- var __ = config.baseUrl || './'
+
+block content
+	//- Provides layout level markup
+	.layout-wrapper.editor
+
+//- Add extra scripts
+block append scripts
+	script(src='/scripts/ace/theme-monokai.js')
+	script(src='/scripts/ace/mode-sparql.js')
+	script(src='/scripts/ace/mode-turtle.js')
+	script(src='/scripts/ace/mode-volt.js')
+	script(src='/scripts/load-query.js')

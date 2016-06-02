@@ -1,0 +1,9 @@
+extends ./_layouts/query
+
+include ./_modules/editor/editor
+
+block config
+	- var __ = '../'
+
+block append content
+	+editor('sparql')
