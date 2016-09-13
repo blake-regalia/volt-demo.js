@@ -1,34 +1,15 @@
+const path = require('path');
 
-// module
-export default (gulp, $, config) => {
+module.exports = function(gulp, $, p_src, p_dest) {
 
-	// destruct config
-	let {
-		rules: h_rules,
-	} = config;
+	// open read stream on source
+	gulp.src(path.join(p_src, this.options.glob || '**/*'))
 
-	// make task
-	return function(s_dir, s_task, p_src, p_dest) {
+		// optional rename
+		.pipe($.rename((...a_args) => {
+			if(this.options.rename) this.options.rename(...a_args);
+		}))
 
-		//
-		let h_options = h_rules[s_task] || {};
-
-		// register task
-		gulp.task(s_task, () => {
-
-			$.util.log(p_src+'/'+this.args[0]);
-
-			//
-			gulp.src(p_src+'/'+this.args[0])
-
-				// 
-				.pipe($.rename((...a_args) => {
-					$.util.log(a_args[0]);
-					if(h_options.rename) h_options.rename(...a_args);
-				}))
-
-				// 
-				.pipe(gulp.dest(p_dest));
-		});
-	};
+		// output
+		.pipe(gulp.dest(p_dest));
 };

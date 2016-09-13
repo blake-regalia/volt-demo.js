@@ -13,7 +13,10 @@
 		],
 		"brace-style": [
 			2,
-			"stroustrup"
+			"stroustrup",
+			{
+				"allowSingleLine": true
+			}
 		],
 		"consistent-return": 0,
 		"indent": [
@@ -27,6 +30,12 @@
 			2,
 			{
 				"max": 3
+			}
+		],
+		"no-empty": [
+			2,
+			{
+				"allowEmptyCatch": true
 			}
 		],
 		"no-use-before-define": 0,

@@ -1,72 +1,60 @@
 
-import util from 'util';
+const util = require('util');
+const autoprefixer = require('autoprefixer');
 
-import autoprefixer from 'autoprefixer';
+module.exports = function(gulp, $, p_src, p_dest) {
 
-// module
-export default (gulp, $) => {
+	// styles & modules directory
+	let p_styles = p_src+'/src/_styles';
+	let p_modules = p_src+'/src/_modules';
 
-	// make task
-	return function(s_dir, s_task, p_src, p_dest) {
+	// build stream
+	return gulp.src(p_styles+'/**/*.less')
 
-		// register new task
-		gulp.task(s_task, () => {
+		// // only proceed with files that have changed
+		// .pipe($.cached(s_task))
 
-			// styles & modules directory
-			let p_styles = `${p_src}/src/_styles`;
-			let p_modules = `${p_src}/src/_modules`;
+		// handle uncaught exceptions thrown by any of the plugins that follow
+		.pipe($.plumber())
 
-			// build stream
-			return gulp.src(`${p_styles}/**/*.less`)
+		// begin sourcemaps
+		.pipe($.sourcemaps.init())
 
-				// // only proceed with files that have changed
-				// .pipe($.cached(s_task))
+			// compile less => css
+			.pipe($.less({
+				paths: [
+					p_styles,
+					p_modules,
+				],
+			}))
 
-				// handle uncaught exceptions thrown by any of the plugins that follow
-				.pipe($.plumber())
+			// auto-prefix css
+			.pipe($.postcss([
+				autoprefixer({
+					browsers: [
+						'last 2 version',
+						'> 5%',
+						'safari 5',
+						'ios 6',
+						'android 4',
+					],
+				})
+			]))
 
-				// begin sourcemaps
-				.pipe($.sourcemaps.init())
+		// remove 'src' dir and '_' file prefix from path
+		.pipe($.if(this.options.rename, $.rename(this.options.rename)))
 
-					// compile less => css
-					.pipe($.less({
-						paths: [
-							p_styles,
-							p_modules,
-						],
-					}))
+		// // minify css
+		// .pipe($.if(B_PRODUCTION, $.minifyCss({
+		// 	rebase: false,
+		// })))
 
-					// auto-prefix css
-					.pipe($.postcss([
-						autoprefixer({
-							browsers: [
-								'last 2 version',
-								'> 5%',
-								'safari 5',
-								'ios 6',
-								'android 4',
-							],
-						})
-					]))
+		// sourcemaps
+		.pipe($.sourcemaps.write())
 
-				// remove 'src' dir and '_' file prefix from path
-				.pipe($.rename((h_stream) => {
-					h_stream.dirname = './styles';
-				}))
+		// write to output directory
+		.pipe(gulp.dest(p_dest));
 
-				// // minify css
-				// .pipe($.if(B_PRODUCTION, $.minifyCss({
-				// 	rebase: false,
-				// })))
-
-				// sourcemaps
-				.pipe($.sourcemaps.write())
-
-				// write to output directory
-				.pipe(gulp.dest(p_dest));
-
-				// // browser sync
-				// .pipe($.if(browser_sync, browser_sync? browser_sync.stream(): ()=>{}));
-		});
-	};
+		// // browser sync
+		// .pipe($.if(browser_sync, browser_sync? browser_sync.stream(): ()=>{}));
 };

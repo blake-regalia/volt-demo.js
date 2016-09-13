@@ -1,49 +1,29 @@
 
-// module
-export default (gulp, $, config) => {
+module.exports = function(gulp, $, p_src, p_dest) {
 
-	// destruct rules
-	let {
-		rules: h_rules
-	} = config;
+	// load all javascript source files
+	return gulp.src(p_src+'/**/*.js')
 
-	// make transpile task
-	return function(s_dir, s_task, p_src, p_dest) {
+		// handle uncaught exceptions thrown by any of the plugins that follow
+		.pipe($.plumber())
 
-		// there is a rule for this task
-		let h_options = {};
-		if(h_rules[s_task]) {
-			h_options = h_rules[s_task];
-		}
+		// do not recompile unchanged files
+		.pipe($.cached(this.task))
 
-		// register new task
-		gulp.task(s_task, () => {
+		// lint all javascript source files
+		.pipe($.eslint())
+		.pipe($.eslint.format())
 
-			// load all javascript source files
-			return gulp.src(p_src+'/**/*.js')
+		// preserve mappings to source files for debugging
+		.pipe($.sourcemaps.init())
 
-				// handle uncaught exceptions thrown by any of the plugins that follow
-				.pipe($.plumber())
+			// transpile
+			.pipe($.babel())
+		.pipe($.sourcemaps.write())
 
-				// do not recompile unchanged files
-				.pipe($.cached(s_task))
+		// optionally rename output
+		.pipe($.if(this.options.rename, $.rename(this.options.rename)))
 
-				// lint all javascript source files
-				.pipe($.eslint())
-				.pipe($.eslint.format())
-
-				// preserve mappings to source files for debugging
-				.pipe($.sourcemaps.init())
-
-					// transpile
-					.pipe($.babel())
-				.pipe($.sourcemaps.write())
-
-				// optionally rename output
-				.pipe($.if(h_options.rename, $.rename(h_options.rename)))
-
-				// write output to dist directory
-				.pipe(gulp.dest(p_dest));
-		});
-	};
+		// write output to dist directory
+		.pipe(gulp.dest(p_dest));
 };
